@@ -15,7 +15,7 @@ class Node{
 template <typename T>
 
 class LinkedList{
- private : 
+ public : 
 // data member
 	  Node<T>* head;
 public:	  int length;

@@ -3,7 +3,39 @@
 #include <cstdbool>
 #include <cstdlib>
 #include "stackModule.cpp"
+#include "queueModel.cpp"
 #define Qsize 10
+
+/*  GrAPH data structure : 
+
+
+
+
+  [ graph: Vertex* head] -----> [ vertex : dataItem ]
+				|	  Node* head|----->[ node : dataItem ]      [ node : dataItem ]
+				[      vertex* next ]      [       node* next]----->[       node* next]----> .....
+
+						|	
+						|
+					       \|/
+						v
+
+				[ vertex : dataItem ]
+				|	  Node* head|----->[ node : dataItem ]      [ node : dataItem ]
+				[      vertex* next ]      [       node* next]----->[       node* next]---->.....
+						
+						|	
+						|
+					       \|/
+						v
+						.
+						.
+						.
+
+
+*/
+
+
 using namespace std;
 
 class Node{
@@ -115,8 +147,8 @@ class Graph{
 			
 	}
 	
-	Vertex * getPointer(char data){
-		Vertex * ptr = head;
+	Vertex * getPointer(char data){   // search vertex list 
+		Vertex * ptr = head; // graph's head
 		while(ptr->dataItem != data)
 			ptr = ptr->next;
 		
@@ -158,25 +190,59 @@ class Graph{
 
 		}
 	}
+	void breadthFirstSearch(){
+		Vertex* vertexPtr;
+		Node* nodePtr;
+		Queue<char> queue;
+		
+		char* visitedNode = new char[size];
+		int count = 0;
+		
+		vertexPtr = head;
+		queue.enqueue(vertexPtr->dataItem);
+	
+		while(!queue.isEmpty()){
+ 			
+			visitedNode[count++] = queue.dequeue();
+			cout<<" "<<visitedNode[count-1]<<" ";
+		    	vertexPtr = getPointer(visitedNode[count-1]);
+			
+			
+
+			nodePtr = vertexPtr->head;
+			while(nodePtr != NULL){
+
+				if (!isIn(nodePtr->dataItem,visitedNode,count)){
+					queue.enqueue(nodePtr->dataItem);  
+				}
+				nodePtr = nodePtr->next;
+			}
+
+		   }
+		}
+
 
 };
+
+
 
 int main(){
  Graph g;
 system("clear");
-g.addVertex('0');
-g.addVertex('1');
 g.addVertex('2');
+g.addVertex('0');
 g.addVertex('3');
-g.addVertex('4');
+g.addVertex('1');
+g.addEdge('1','2');
+g.addEdge('2','3');
+g.addEdge('3','3');
+g.addEdge('2','0');
 g.addEdge('0','2');
-g.addEdge('2','1');
-g.addEdge('1','0');
-g.addEdge('0','3');
-g.addEdge('3','4');
-g.addEdge('4','0');
+g.addEdge('0','1');
 
 g.depthFirstSearch();
+cout<<"\n\n";
+g.breadthFirstSearch();
 cout<<"\n\n";
 
  return 0;

@@ -2,15 +2,19 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdbool>
+#include "stackModule.cpp"
+#include "queueModel.cpp"
 
 using namespace std;
+
+template<typename T>
 
 class Graph {
   private :
 	    int** adjMatrix;
-	    int* vertices; // stores the name of the vertices 
-	    int size;
-	    int verticesPointer; //stores the last index of vertices arrey
+	    T* vertices; // array that stores the name of the vertices 
+	    int size; //total no of nodes/vertices of the graph 
+	    int verticesPointer; //stores the last index of vertices array
 
 
  public:
@@ -22,7 +26,7 @@ class Graph {
 			adjMatrix[i] = new int[size];
 		
 		setAdjMatrix();
-		vertices = new int[size]; 
+		vertices = new T[size]; //**
 		verticesPointer  = -1;
 	}
 
@@ -45,25 +49,26 @@ class Graph {
 //----------------------------------------------------------------
 //---------------- member functions ------------------------------
 
-	int mappingIndex(int vertex){ //return the index value of respective vertices
+	int mappingIndex(T vertex){ //return the index value of respective vertices
 		for (int i  = 0 ; i <= verticesPointer ; i++ ){
 			if (vertices[i]  == vertex)
 				return i;
 		}	
-		return NULL; // if vertex doesnot exist return null
+		return -1; // if vertex doesnot exist return -1
 	}
 
 
-	void addVertex(int data){
-		vertices[++verticesPointer]  = data;
+	void addVertex(T vertex){
+		vertices[++verticesPointer]  = vertex;
 	}
 	
-	void addEdge(int from , int to){
+	void addEdge(T from , T to){
 		int indexOfFrom = mappingIndex(from);
 		int indexOfTo = mappingIndex(to);
-
-		adjMatrix[indexOfFrom][indexOfTo]++;   // more than one edge is acceptable. 
-
+	      if (indexOfFrom != -1 && indexOfTo != -1)  
+			adjMatrix[indexOfFrom][indexOfTo]++;   // more than one edge is acceptable. 
+	      else
+		cout<<"\n ! error on adding edge\n\t :!: make sure vertex is added into the graph\n";
 	}
 
 
@@ -80,6 +85,70 @@ class Graph {
 		}
 
 	}
+
+	bool isIn(T vertex,T vertices[] , int length){
+		for (int i = 0 ; i < length ; i++){
+			if (vertex == vertices[i] )
+				return true;
+		}
+		return false;
+		
+	}
+
+	void depthFirstSearch(T initialVertex){
+			 
+		Stack<T> stack; // Stack<char> stack;
+		
+		int index = mappingIndex(initialVertex); 
+		stack.push(vertices[index]); // pushing initial vertices
+ 
+		T* visitedVertex = new T[verticesPointer++]; //verticesPointer indirectly represents the total vertices available in the graph
+		int pointer=0;
+		while(!stack.isEmpty()){
+		   T vertex = stack.pop();
+		   if (!isIn(vertex,visitedVertex,pointer)){
+					visitedVertex[pointer++] = vertex;
+					cout<<vertex<<"  ";
+				
+				index = mappingIndex(vertex);
+
+			 for (int i = 0 ; i < size ; i++){
+				if ((adjMatrix[index][i] > 0) && !isIn(vertices[i],visitedVertex,pointer))// searching edges of last visited nodes
+							stack.push(vertices[i]);			  //checking if it is already visited or not 
+	 					
+			}
+		    }
+		}	
+		
+	}
+
+
+	void breadthFirstSearch(T initialVertex){
+			Queue<T> queue; // Stack<char> stack;
+		
+		int index = mappingIndex(initialVertex); 
+		queue.enqueue(vertices[index]); // pushing initial vertices
+ 
+		T* visitedVertex = new T[verticesPointer++]; //verticesPointer indirectly represents the total vertices available in the graph
+		int pointer=0;
+		while(!queue.isEmpty()){
+		   T vertex = queue.dequeue();
+		   if (!isIn(vertex,visitedVertex,pointer)){
+					visitedVertex[pointer++] = vertex;
+					cout<<vertex<<"  ";
+				
+				index = mappingIndex(vertex);
+
+			 for (int i = 0 ; i < size ; i++){
+				if ((adjMatrix[index][i] > 0) && !isIn(vertices[i],visitedVertex,pointer))// searching edges of last visited nodes
+						queue.enqueue(vertices[i]);			  //checking if it is already visited or not 
+	 					
+			}
+		    }
+		}	
+
+	}
+	
 	
 //-----------------------------------------------------------------
 
@@ -90,15 +159,21 @@ class Graph {
 
 
 int main(){
-Graph graph(3); //graph with 3 vertex
+Graph<char> graph(3); //graph with 3 vertices
 
-graph.addVertex(1);
-graph.addVertex(2);
-graph.addVertex(3);
-graph.addEdge(1,2);
-graph.addEdge(3,2);
+graph.addVertex('A');
+graph.addVertex('B');
+graph.addVertex('C');
+
+graph.addEdge('A','A');
+graph.addEdge('A','B');
+graph.addEdge('A','C');
+graph.addEdge('C','B');
 graph.show();
-
+cout<<"\n";
+graph.depthFirstSearch('A'); //
+cout<<"\n";
+graph.breadthFirstSearch('A');
 return 0;
 }
 

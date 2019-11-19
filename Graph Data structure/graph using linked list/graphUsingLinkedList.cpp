@@ -175,10 +175,12 @@ class Graph{
 
 		vertexPtr = head;
 		stack.push(vertexPtr->dataItem);
-		while(!stack.isEmpty()){
-			visitedNode[count++] = stack.pop();
-			cout<<" "<<visitedNode[count-1] << " ";
-			vertexPtr = getPointer(visitedNode[count-1]); //**
+		while(!stack.isEmpty()){   
+		char node = stack.pop(); 
+		if (!isIn(node,visitedNode,count)){
+			visitedNode[count++] = node;
+			cout<<" "<<node << " ";
+			vertexPtr = getPointer(node); 
 			
 			nodePtr = vertexPtr->head;
 			while(nodePtr != NULL){
@@ -186,6 +188,7 @@ class Graph{
 					stack.push(nodePtr->dataItem);
 				nodePtr = nodePtr->next;				
 			}
+		    }
 
 
 		}
@@ -202,21 +205,21 @@ class Graph{
 		queue.enqueue(vertexPtr->dataItem);
 	
 		while(!queue.isEmpty()){
- 			
-			visitedNode[count++] = queue.dequeue();
-			cout<<" "<<visitedNode[count-1]<<" ";
-		    	vertexPtr = getPointer(visitedNode[count-1]);
+ 			char node = queue.dequeue();
+		   if (!isIn(node,visitedNode,count)){
+			visitedNode[count++] = node;
+			cout<<" "<<node<<" ";
+		    	vertexPtr = getPointer(node);
 			
-			
-
 			nodePtr = vertexPtr->head;
 			while(nodePtr != NULL){
 
-				if (!isIn(nodePtr->dataItem,visitedNode,count)){
+				if (!isIn(nodePtr->dataItem,visitedNode,count))
 					queue.enqueue(nodePtr->dataItem);  
-				}
+			
 				nodePtr = nodePtr->next;
 			}
+		     }
 
 		   }
 		}
